@@ -20,26 +20,38 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/textView1"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="20dp" >
+        android:layout_marginBottom="15dp" >
 
         <RadioButton
             android:id="@+id/port_ttyHSL0"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="30sp"
+            android:textSize="22sp"
             android:text="@string/port_ttyHSL0" />
         <RadioButton
             android:id="@+id/port_ttyHSL1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="30sp"
+            android:textSize="22sp"
             android:text="@string/port_ttyHSL1" />
         <RadioButton
             android:id="@+id/port_ttyHSL2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="30sp"
+            android:textSize="22sp"
             android:text="@string/port_ttyHSL2"/>
+        <RadioButton
+            android:id="@+id/port_ttyGS0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="22sp"
+            android:text="@string/port_ttyGS0"/>
+        <RadioButton
+            android:id="@+id/port_ttyGS1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="22sp"
+            android:text="@string/port_ttyGS1"/>
     </RadioGroup>
 
     <LinearLayout
@@ -61,6 +73,13 @@
             android:layout_weight="1"
             android:text="@string/write_btn"
             android:textSize="15sp" />
+        <Button
+            android:id="@+id/reopen_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/reopen_btn"
+            android:textSize="15sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -68,7 +87,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="2dp"
         android:layout_below="@+id/linearLayout1">
         <Button
             android:id="@+id/read_btn"

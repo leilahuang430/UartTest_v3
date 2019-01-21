@@ -4,8 +4,12 @@
     <string name="port_ttyHSL0">/dev/ttyHSL0</string>
     <string name="port_ttyHSL1">/dev/ttyHSL1</string>
     <string name="port_ttyHSL2">/dev/ttyHSL2</string>
-    <string name="write_btn">(Uart)Write Into</string>
-    <string name="read_btn">(Uart)Read Data</string>
+    <string name="port_ttyGS0">/dev/ttyGS0</string>
+    <string name="port_ttyGS1">/dev/ttyGS1</string>
+
+    <string name="reopen_btn">re open</string>
+    <string name="write_btn">Write</string>
+    <string name="read_btn">Read Data</string>
     <string name="clear_btn">Clear</string>
     <string name="received">(Uart)Received</string>
 </resources>
