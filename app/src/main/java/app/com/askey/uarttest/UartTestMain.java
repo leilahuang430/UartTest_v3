@@ -31,30 +31,30 @@ public class UartTestMain extends Activity {
     protected InputStream mInputStream;
     protected OutputStream mOutputStream;
     private RadioGroup mRadioGroup;
-    private RadioButton mRadioButton0, mRadioButton1, mRadioButton2, mRadioButton3, mRadioButton4;
+    private RadioButton mRadioButton1, mRadioButton2, mRadioButton3, mRadioButton4, mRadioButton5, mRadioButton6;
     private Button mWriteBtn, mReadBtn, mClearBtn, mReOpenBtn;
     private EditText minputEditText, mEditTextReception;
     private String mInputStr;
-    private int flag=5;
+    private int flag=0;
+
+    private ScrollView mScrollView;
+    private TextView mLog;
 
     //GPIO TEST
     //private String gpio10_path = "/dev/READING_PW_EN";  //set 0=Low  1=high,  control Level Shift
     //private String gpio89_path= "/dev/KEY_TOP_1";  //KEY_TOP_1, gpio89
-
-    //private String gpio_test= "/dev/EXTERNAL_PORT_EN";  //SAM TEST
-    //GPIO END
-    private ScrollView mScrollView;
-    private TextView mLog;
+    private String gpio_test= "/dev/EXTERNAL_PORT_EN";  //SAM TEST
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_uart_test_main);
-        mRadioButton0 = (RadioButton) findViewById(R.id.port_ttyHSL0);
-        mRadioButton1 = (RadioButton) findViewById(R.id.port_ttyHSL1);
-        mRadioButton2 = (RadioButton) findViewById(R.id.port_ttyHSL2);
-        mRadioButton3 = (RadioButton) findViewById(R.id.port_ttyGS0);
-        mRadioButton4 = (RadioButton) findViewById(R.id.port_ttyGS1);
+        mRadioButton1 = (RadioButton) findViewById(R.id.port_ttyHSL0);
+        mRadioButton2 = (RadioButton) findViewById(R.id.port_ttyHSL1);
+        mRadioButton3 = (RadioButton) findViewById(R.id.port_ttyHSL2);
+        mRadioButton4 = (RadioButton) findViewById(R.id.port_ttyGS0);
+        mRadioButton5 = (RadioButton) findViewById(R.id.port_ttyGS1);
+        mRadioButton6 = (RadioButton) findViewById(R.id.gpio_rw);
         mRadioGroup = (RadioGroup) findViewById(R.id.radioGroup1);
         mRadioGroup.setOnCheckedChangeListener(radGrpRegionOnCheckedChange);
         minputEditText = (EditText) findViewById(R.id.editText1);
@@ -69,32 +69,34 @@ public class UartTestMain extends Activity {
         mScrollView = (ScrollView) findViewById(R.id.scrollView);
         mLog = (TextView) findViewById(R.id.TextView2);
 
-        //GPIO TEST
-        //  writeToGpio("1", gpio10_path);  // "1"= high , "0"= Low, control Level Shift
-        // writeToGpio("1", gpio89_path);   //KEY_TOP_1, gpio89
-
-        // writeToGpio("1", gpio_test);   //SAM TEST
-        //GPIO END
-
         mWriteBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View arg0) {
                 mInputStr = minputEditText.getText().toString();
                 switch (flag) {
                     case 0:
-                        sendSerialPort("/dev/ttyHSL0", mInputStr);
+                        Toast.makeText(getApplicationContext(), "choose one, please",Toast.LENGTH_SHORT).show();
                         break;
                     case 1:
-                        sendSerialPort("/dev/ttyHSL1", mInputStr);
+                        sendSerialPort("/dev/ttyHSL0", mInputStr);
                         break;
                     case 2:
-                        sendSerialPort("/dev/ttyHSL2", mInputStr);
+                        sendSerialPort("/dev/ttyHSL1", mInputStr);
                         break;
                     case 3:
-                        sendSerialPort("/dev/ttyGS0", mInputStr);
+                        sendSerialPort("/dev/ttyHSL2", mInputStr);
                         break;
                     case 4:
+                        sendSerialPort("/dev/ttyGS0", mInputStr);
+                        break;
+                    case 5:
                         sendSerialPort("/dev/ttyGS1", mInputStr);
+                        break;
+                    case 6:
+                        //GPIO TEST
+//                        writeToGpio("1", gpio10_path);  // "1"= high , "0"= Low, control Level Shift
+//                        writeToGpio("1", gpio89_path);  //KEY_TOP_1, gpio89
+                        writeToGpio(mInputStr, gpio_test);   //SAM TEST
                         break;
                 }
             }
@@ -105,19 +107,25 @@ public class UartTestMain extends Activity {
             public void onClick(View arg0) {
                 switch (flag) {
                     case 0:
-                        readFile("/dev/ttyHSL0");
+                        Toast.makeText(getApplicationContext(), "choose one, please",Toast.LENGTH_SHORT).show();
                         break;
                     case 1:
-                        readFile("/dev/ttyHSL1");
+                        readFile("/dev/ttyHSL0");
                         break;
                     case 2:
-                        readFile("/dev/ttyHSL2");
+                        readFile("/dev/ttyHSL1");
                         break;
                     case 3:
-                        readFile("/dev/ttyGS0");
+                        readFile("/dev/ttyHSL2");
                         break;
                     case 4:
+                        readFile("/dev/ttyGS0");
+                        break;
+                    case 5:
                         readFile("/dev/ttyGS1");
+                        break;
+                    case 6:
+                        readGpio(gpio_test);
                         break;
                 }
             }
@@ -143,19 +151,24 @@ public class UartTestMain extends Activity {
                     Log.e(TAG, "re open"+"\n");
                     switch (flag) {
                         case 0:
-                            openSerialPort("/dev/ttyHSL0",115200);
+                            Toast.makeText(getApplicationContext(), "choose one, please",Toast.LENGTH_SHORT).show();
                             break;
                         case 1:
-                            openSerialPort("/dev/ttyHSL1",115200);
+                            openSerialPort("/dev/ttyHSL0",115200);
                             break;
                         case 2:
-                            openSerialPort("/dev/ttyHSL2",115200);
+                            openSerialPort("/dev/ttyHSL1",115200);
                             break;
                         case 3:
-                            openSerialPort("/dev/ttyGS0",9600);
+                            openSerialPort("/dev/ttyHSL2",115200);
                             break;
                         case 4:
+                            openSerialPort("/dev/ttyGS0",9600);
+                            break;
+                        case 5:
                             openSerialPort("/dev/ttyGS1",9600);
+                            break;
+                        case 6:
                             break;
                     }
                 }
@@ -169,7 +182,8 @@ public class UartTestMain extends Activity {
             switch (checkedId) {
                 case R.id.port_ttyHSL0:
                     Log.v(TAG, "choose port_ttyHSL0");
-                    flag=0;
+                    flag=1;
+                    mReOpenBtn.setEnabled(true);
                     if (mSerialPort != null) {
                         closeSerialPort();
                     }
@@ -179,7 +193,8 @@ public class UartTestMain extends Activity {
                     break;
                 case R.id.port_ttyHSL1:
                     Log.v(TAG, "choose port_ttyHSL1");
-                    flag=1;
+                    flag=2;
+                    mReOpenBtn.setEnabled(true);
                     if (mSerialPort != null) {
                         closeSerialPort();
                     }
@@ -189,7 +204,8 @@ public class UartTestMain extends Activity {
                     break;
                 case R.id.port_ttyHSL2:
                     Log.v(TAG, "choose port_ttyHSL2");
-                    flag=2;
+                    flag=3;
+                    mReOpenBtn.setEnabled(true);
                     if (mSerialPort != null) {
                         closeSerialPort();
                     }
@@ -199,7 +215,8 @@ public class UartTestMain extends Activity {
                     break;
                 case R.id.port_ttyGS0:
                     Log.v(TAG, "choose port_ttyGS0");
-                    flag=3;
+                    flag=4;
+                    mReOpenBtn.setEnabled(true);
                     if (mSerialPort != null) {
                         closeSerialPort();
                     }
@@ -208,14 +225,24 @@ public class UartTestMain extends Activity {
                     Toast.makeText(getApplicationContext(), "choose /dev/ttyGS0",Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.port_ttyGS1:
-                    Log.v(TAG, "choose port_ttyGS0");
-                    flag=4;
+                    Log.v(TAG, "choose port_ttyGS1");
+                    flag=5;
+                    mReOpenBtn.setEnabled(true);
                     if (mSerialPort != null) {
                         closeSerialPort();
                     }
                     openSerialPort("/dev/ttyGS1",9600);
 
                     Toast.makeText(getApplicationContext(), "choose /dev/ttyGS1",Toast.LENGTH_SHORT).show();
+                    break;
+                case R.id.gpio_rw:
+                    Log.v(TAG, "choose gpio r/w");
+                    flag=6;
+                    mReOpenBtn.setEnabled(false);
+                    if (mSerialPort != null) {
+                        closeSerialPort();
+                    }
+                    Toast.makeText(getApplicationContext(), "choose gpio r/w",Toast.LENGTH_SHORT).show();
                     break;
             }
         }
@@ -325,8 +352,7 @@ public class UartTestMain extends Activity {
 
 
     /**
-     * GPIO  RWtest function
-     * line 325~370
+     * GPIO  r/w test function
      */
     //GPIO  create file & write
     public void writeToGpio(String data, String gpioPath) {
@@ -335,14 +361,15 @@ public class UartTestMain extends Activity {
             FileWriter writer = new FileWriter(file, false);
             writer.write(data);
             writer.close();
-            mLog.append("GPIO write = " + data +" to " + gpioPath + "\n");
+            mLog.append("GPIO write = " + data +" to  " + gpioPath + "\n");
             mScrollView.fullScroll(View.FOCUS_DOWN);
             Log.v(TAG, "GPIO write = " + data +" to " + gpioPath);
         } catch (IOException e1) {
             e1.printStackTrace();
-            Log.e(TAG, "GPIO writeData IOException=" + e1);
             mLog.append("GPIO writeData IOException=" + e1 + "\n");
             mScrollView.fullScroll(View.FOCUS_DOWN);
+            Log.e(TAG, "GPIO writeData IOException=" + e1);
+
         }
     }
 
@@ -356,18 +383,18 @@ public class UartTestMain extends Activity {
             int s = mBufferedReader.read(buffer, 0, 20);
 
             GpioValue = (String.valueOf(buffer).trim());
-            Log.v(TAG, "GpioValue=" + GpioValue);
-            mLog.append("GpioValue=" + GpioValue + "\n");
-            mScrollView.fullScroll(View.FOCUS_DOWN);
             mEditTextReception.append(GpioValue);
+            mLog.append(gpio_path+"  read data=" + GpioValue + "\n");
+            mScrollView.fullScroll(View.FOCUS_DOWN);
+            Log.v(TAG, gpio_path+"  read data=" + GpioValue + "\n");
 
             mBufferedReader.close();
             mFileReader.close();
         } catch (Exception e) {
             e.printStackTrace();
-            Log.e(TAG, "GPIO readData IOException=" + e);
             mLog.append("GPIO readData IOException=" + e + "\n");
             mScrollView.fullScroll(View.FOCUS_DOWN);
+            Log.e(TAG, "GPIO readData IOException=" + e);
         }
     }
 

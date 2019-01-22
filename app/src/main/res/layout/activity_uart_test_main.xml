@@ -52,6 +52,12 @@
             android:layout_height="wrap_content"
             android:textSize="22sp"
             android:text="@string/port_ttyGS1"/>
+        <RadioButton
+            android:id="@+id/gpio_rw"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="22sp"
+            android:text="@string/gpio_rw"/>
     </RadioGroup>
 
     <LinearLayout
