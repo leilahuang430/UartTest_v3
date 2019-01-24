@@ -16,34 +16,36 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import android_serialport_api.SerialPort;
 
-public class UartTestMain extends Activity {
+public class UartTestMain extends Activity implements CompoundButton.OnCheckedChangeListener{
     private static final String TAG = "UartTestMain";
     protected SerialPort mSerialPort;
     protected InputStream mInputStream;
     protected OutputStream mOutputStream;
     private RadioGroup mRadioGroup;
-    private RadioButton mRadioButton1, mRadioButton2, mRadioButton3, mRadioButton4, mRadioButton5, mRadioButton6;
+    private RadioButton mRadioButton1, mRadioButton2, mRadioButton3, mRadioButton4, mRadioButton5;
+    private Switch gpioSwitch;
     private Button mWriteBtn, mReadBtn, mClearBtn, mReOpenBtn;
     private EditText minputEditText, mEditTextReception;
-    private String mInputStr;
+    private String mInputStr, gpio_data;
     private int flag=0;
 
     private ScrollView mScrollView;
     private TextView mLog;
 
-    //GPIO TEST
     //private String gpio10_path = "/dev/READING_PW_EN";  //set 0=Low  1=high,  control Level Shift
     //private String gpio89_path= "/dev/KEY_TOP_1";  //KEY_TOP_1, gpio89
-    private String gpio_test= "/dev/EXTERNAL_PORT_EN";  //SAM TEST
+    private String gpio_path= "/sys/kernel/debug/askey_gpio/external/EXTERNAL_UART_MODE";  //GPIO control
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +56,8 @@ public class UartTestMain extends Activity {
         mRadioButton3 = (RadioButton) findViewById(R.id.port_ttyHSL2);
         mRadioButton4 = (RadioButton) findViewById(R.id.port_ttyGS0);
         mRadioButton5 = (RadioButton) findViewById(R.id.port_ttyGS1);
-        mRadioButton6 = (RadioButton) findViewById(R.id.gpio_rw);
+        gpioSwitch = (Switch) findViewById(R.id.swh_gpio);
+        gpioSwitch.setOnCheckedChangeListener(this);
         mRadioGroup = (RadioGroup) findViewById(R.id.radioGroup1);
         mRadioGroup.setOnCheckedChangeListener(radGrpRegionOnCheckedChange);
         minputEditText = (EditText) findViewById(R.id.editText1);
@@ -92,12 +95,6 @@ public class UartTestMain extends Activity {
                     case 5:
                         sendSerialPort("/dev/ttyGS1", mInputStr);
                         break;
-                    case 6:
-                        //GPIO TEST
-//                        writeToGpio("1", gpio10_path);  // "1"= high , "0"= Low, control Level Shift
-//                        writeToGpio("1", gpio89_path);  //KEY_TOP_1, gpio89
-                        writeToGpio(mInputStr, gpio_test);   //SAM TEST
-                        break;
                 }
             }
         });
@@ -123,9 +120,6 @@ public class UartTestMain extends Activity {
                         break;
                     case 5:
                         readFile("/dev/ttyGS1");
-                        break;
-                    case 6:
-                        readGpio(gpio_test);
                         break;
                 }
             }
@@ -167,8 +161,6 @@ public class UartTestMain extends Activity {
                             break;
                         case 5:
                             openSerialPort("/dev/ttyGS1",9600);
-                            break;
-                        case 6:
                             break;
                     }
                 }
@@ -235,18 +227,26 @@ public class UartTestMain extends Activity {
 
                     Toast.makeText(getApplicationContext(), "choose /dev/ttyGS1",Toast.LENGTH_SHORT).show();
                     break;
-                case R.id.gpio_rw:
-                    Log.v(TAG, "choose gpio r/w");
-                    flag=6;
-                    mReOpenBtn.setEnabled(false);
-                    if (mSerialPort != null) {
-                        closeSerialPort();
-                    }
-                    Toast.makeText(getApplicationContext(), "choose gpio r/w",Toast.LENGTH_SHORT).show();
-                    break;
             }
         }
     };
+
+    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+        switch (compoundButton.getId()) {
+            case R.id.swh_gpio:
+                if(compoundButton.isChecked()) {
+                    Log.v(TAG, "open GPIO");
+                    Toast.makeText(this,"GPIO=1",Toast.LENGTH_SHORT).show();
+                    writeToGpio("1", gpio_path); //GPIO control
+                }
+                else {
+                    Log.v(TAG, "close GPIO");
+                    Toast.makeText(this,"GPIO=0",Toast.LENGTH_SHORT).show();
+                    writeToGpio("0", gpio_path);  //GPIO control
+                }
+                break;
+        }
+    }
 
     private void openSerialPort(String SerialPortpath, int baudrate) {
         if (mSerialPort == null) {
@@ -340,10 +340,13 @@ public class UartTestMain extends Activity {
                     String recData = new String(buffer, 0, size );
                     if (recData == "") {
                         mEditTextReception.append("UART error" + "\n");
-                        Log.e(TAG, "UART recData = "+ "error");
+                        mLog.append("UART error = "+ recData + "\n");
+                        Log.e(TAG, "UART error = "+ recData);
                     } else {
                         mEditTextReception.append(recData);
-                        Log.v(TAG, "UART recData = "+ recData.getBytes());
+                        mLog.append("UART recData = "+ recData + "\n");
+                        mScrollView.fullScroll(View.FOCUS_DOWN);
+                        Log.v(TAG, "UART recData = "+ recData);
                     }
                 }
             }
@@ -361,33 +364,30 @@ public class UartTestMain extends Activity {
             FileWriter writer = new FileWriter(file, false);
             writer.write(data);
             writer.close();
-            mLog.append("GPIO write = " + data +" to  " + gpioPath + "\n");
+            mLog.append("GPIO write: " +data + "\n");
+            mLog.append(gpioPath + "\n");
             mScrollView.fullScroll(View.FOCUS_DOWN);
-            Log.v(TAG, "GPIO write = " + data +" to " + gpioPath);
+            Log.v(TAG, "GPIO write : " + data + " to "+gpioPath+"\n");
+
+            String gpio = readGpio(gpio_path);
+            mLog.append("GPIO read: " + gpio+ "\n");
         } catch (IOException e1) {
             e1.printStackTrace();
             mLog.append("GPIO writeData IOException=" + e1 + "\n");
             mScrollView.fullScroll(View.FOCUS_DOWN);
-            Log.e(TAG, "GPIO writeData IOException=" + e1);
-
+            Log.e(TAG, "GPIO writeData IOException=" + e1+ "\n");
         }
     }
 
     //GPIO  read
-    private void readGpio(String gpio_path) {
+    private String readGpio(String gpio_path) {
         try {
-            String GpioValue=null;
+            gpio_data=null;
             FileReader mFileReader = new FileReader(gpio_path);
             BufferedReader mBufferedReader = new BufferedReader(mFileReader);
             char[] buffer = new char[20];
             int s = mBufferedReader.read(buffer, 0, 20);
-
-            GpioValue = (String.valueOf(buffer).trim());
-            mEditTextReception.append(GpioValue);
-            mLog.append(gpio_path+"  read data=" + GpioValue + "\n");
-            mScrollView.fullScroll(View.FOCUS_DOWN);
-            Log.v(TAG, gpio_path+"  read data=" + GpioValue + "\n");
-
+            gpio_data = (String.valueOf(buffer).trim());
             mBufferedReader.close();
             mFileReader.close();
         } catch (Exception e) {
@@ -396,12 +396,11 @@ public class UartTestMain extends Activity {
             mScrollView.fullScroll(View.FOCUS_DOWN);
             Log.e(TAG, "GPIO readData IOException=" + e);
         }
+        return gpio_data;
     }
 
     protected void onDestroy() {
-//        writeToGpio("0", gpio10_path);  // "1"= high , "0"= Low
-//        writeToGpio("0", gpio89_path);   //KEY_TOP_1, gpio89
-//        writeToGpio("0", gpio_test);   //SAM TEST
+        writeToGpio("0", gpio_path);   //GPIO control
         closeSerialPort();
         super.onDestroy();
     }

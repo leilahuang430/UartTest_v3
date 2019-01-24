@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:android.settings="http://schemas.android.com/apk/res-auto"
     tools:context="app.com.askey.uarttest.UartTestMain">
 
     <TextView
@@ -52,20 +53,23 @@
             android:layout_height="wrap_content"
             android:textSize="22sp"
             android:text="@string/port_ttyGS1"/>
-        <RadioButton
-            android:id="@+id/gpio_rw"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="22sp"
-            android:text="@string/gpio_rw"/>
     </RadioGroup>
+    <Switch
+        android:id="@+id/swh_gpio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/radioGroup1"
+        android:text="@string/gpio_rw"
+        android:textSize="22sp"
+        android:textOff="0"
+        android:textOn="1"/>
 
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_below="@+id/radioGroup1">
+        android:layout_below="@+id/swh_gpio">
         <EditText
             android:id="@+id/editText1"
             android:layout_width="match_parent"
