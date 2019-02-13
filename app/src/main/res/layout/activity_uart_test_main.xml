@@ -60,22 +60,24 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/radioGroup1"
         android:text="@string/gpio_rw"
-        android:textSize="22sp"
-        android:textOff="0"
-        android:textOn="1"/>
-
+        android:textSize="16sp"
+        android:textOff="@string/gpio_off"
+        android:textOn="@string/gpio_on">
+    </Switch>
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_below="@+id/swh_gpio">
+
         <EditText
             android:id="@+id/editText1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textSize="10sp"/>
+            android:inputType="number"
+            android:textSize="12sp" />
         <Button
             android:id="@+id/write_btn"
             android:layout_width="match_parent"

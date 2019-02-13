@@ -6,7 +6,9 @@
     <string name="port_ttyHSL2">/dev/ttyHSL2</string>
     <string name="port_ttyGS0">/dev/ttyGS0</string>
     <string name="port_ttyGS1">/dev/ttyGS1</string>
-    <string name="gpio_rw">GPIO 0/1</string>
+    <string name="gpio_rw">GPIO[ EXTERNAL_UART_MODE ] 0/1</string>
+    <string name="gpio_on">1</string>
+    <string name="gpio_off">0</string>
     <string name="reopen_btn">re open</string>
     <string name="write_btn">Write</string>
     <string name="read_btn">Read Data</string>
